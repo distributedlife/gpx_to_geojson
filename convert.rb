@@ -37,13 +37,14 @@ tracks.each do |track|
 	name = track.children.select {|child| child.name == "name"}.first.text
 	segments = track.children.select {|child| child.name == "trkseg"}
 	next if segments.empty?
+	next if points(segments).length == 1
 	
 	time = segments.first.children.select {|child| child.name == "trkpt"}.first.children.select {|child| child.name == "time"}.first.text
 
 	puts "Creating track: #{name}"
 
 	dirname = filename.gsub(".gpx", "")
-	Dir.mkdir dirname
+	Dir.mkdir dirname unless Dir.exists? dirname
 
 	write_geojson_file "#{dirname}/#{name}.geojson", points(segments)
 end
